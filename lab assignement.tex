@@ -146,7 +146,66 @@ Plugging \textbf{(4)} and \textbf{(8)} in \textbf{(13)}
 
 \section{Question 3}
 
-This is my answer to question 3, with a citation \cite{vaswani2017attention}. 
+This is my answer to question 3
+
+\section{Question 4}
+Two models are described in \cite{quocLe2014doc2vec} to learn document vectors
+\begin{itemize}
+\item Distributed Memory Model of Paragraoh Vectors (PV-DM)\\
+PV-DM takes as input a document and a context sampled from input document and try to infer the center word of input context
+\item Distributed Bag of Words  of Paragraph Vectors (PV-DBOW)\\
+PV-DBOW takes as input a document, try to infer context sampled from document
+\end{itemize}
+
+In my understanding, PV-DBOW is focused on document vector learning and is not trying to combine with document vector learning. Only document matrix is input from model and contrary to Skip-Gram ob CBOW word2vec model, there is no input $R^{\vert V \vert \times d}$ word matrix from which word vector from $R^{d}$ can be obtained.\\
+
+Alternatively, PV-DM takes as input a document and a context. Through what is refered as word Matrix $W$ in \cite{quocLe2014doc2vec}, context can be associated to a word vector in $R^{d}$. Such association is performed by multiplying one-hot encoded representation of words of context in vocabulary $V$ with $W$ matrix.
+
+In assignment, skip-gram word2vec model, center word and not context are used as input to learn word vectors. To merge approach, for our architecture of combined document and word vector learning, following principles will be used:
+\begin{itemize}
+\item PV-DM architecture
+\item Using center word as input
+\item Using estimated probability distribution of context associated with center word as output
+\item Same negative sampling technique
+\end{itemize}
+
+
+\subsection{PV-DM model architecture}
+
+
+\subsubsection{New document matrix parameter}
+
+$R^{\vert D \vert \times  q}$
+
+\subsection{word2vec preprocessing update}
+
+\subsubsection{Word index to document index mapping table}
+
+\subsubsection{Document index to word index mapping table}
+
+\subsubsection{Document matrix weight initialization}
+
+\subsection{word2vec training update}
+
+\subsubsection{Added document matrix in input layer}
+
+\subsubsection{Word matrix in input layer used for context instead of center word}
+
+\subsubsection{Combination / aggregation of document and word matrix for hidden vector}
+
+
+\subsubsection{Per training sample, input / output word matrix weights update}
+
+\subsubsection{Per document, input document matrix weights update}
+
+
+\subsubsection{two pass training}
+
+\paragraph{ First pass - combined learning word and document vector for training set}
+During  training, document $W_{d}$ and word input / output matrices ($W_{i}$ and $W_{o}$) weights are updated
+
+\paragraph{ Second pass - only learning new document vector}
+Weights for $W_{i}$ (word input context selection) and output word matrix $W_{o}$ (softmax parameters) are not updated. Only weights for document matrix $W_{d}$ are updated
 
 %------------------------------------------------
 
