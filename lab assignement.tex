@@ -1,0 +1,156 @@
+\documentclass[a4paper]{article} 
+\input{style/head.tex}
+
+%-------------------------------
+%	TITLE VARIABLES (identify your work!)
+%-------------------------------
+%-------------------------------
+%	TITLE VARIABLES (identify your work!)
+%-------------------------------
+
+\newcommand{\yourname}{Philippe BAZET} % replace YOURNAME with your name
+\newcommand{\youremail}{pbazet@yahoo.com} % replace YOUREMAIL with your email
+\newcommand{\assignmentnumber}{1} % replace X with the lab session number
+
+\begin{document}
+
+%-------------------------------
+%	TITLE SECTION (do not modify unless you really need to)
+%-------------------------------
+\input{style/header.tex}
+
+%-------------------------------
+%	ASSIGNMENT CONTENT (add your responses)
+%-------------------------------
+
+\section{Question 1}
+Given $c^{+} \in C^{+}_{t}$ only term of $L$ depending on $w_{c^{+}}$  is $Log(1 + e^{-g_{c^{+}}})$ with $g_{c^{+}} = w_{c^{+}}^{T}w_{t}$
+
+Applying chain rule
+
+
+\begin{equation}
+    \frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{c^{+}}}=
+    \frac{\partial Log(1 + e^{-g_{c^{+}}})}{\partial g_{c^{+}}}\frac{\partial g_{c^{+}}}{\partial w_{c^{+}}^{T}}
+\end{equation}
+
+\begin{equation}
+    \frac{\partial Log(1 + e^{-g_{c^{+}}})}{\partial g_{c^{+}}}= \frac{-e^{- g_{c^{+}}}}{1+e^{- g_{c^{+}}}}
+\end{equation}
+
+By multiplying numerator and denominator of \textbf{(2)} by $e^{g_{c^{+}}}$
+
+\begin{equation}
+    \frac{\partial Log(1 + e^{-g_{c^{+}}})}{\partial g_{c^{+}}} = \frac{-1}{1 + e^{g_{c^{+}}}}
+\end{equation}
+Deriving $g_{c^{+}}$
+
+\begin{equation}
+\frac{\partial g_{c^{+}}}{\partial w_{c^{+}}^{T}}=w_{t}
+\end{equation}
+
+Combining \textbf{(3)} and \textbf{(4)} in \textbf{(1)} and replacing $g_{c^{+}}$ by its value
+
+\begin{equation}
+\boxed{
+\frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{c^{+}}}=\frac{-w_{t}}{1 + e^{w_{c^{+}}^{T}w_{t}}}
+}
+\end{equation}
+
+Given $ c^{-} \in C^{-}_{t}$, $ g_{c^{+}} = w_{c^{+}}^{T}w_{t}$ using same reasoning
+\begin{equation}
+\frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{c^{-}}}=
+    \frac{\partial Log(1 + e^{g_{c^{-}}})}{\partial g_{c^{-}}}
+*
+\frac{\partial g_{c^{-}}}{\partial w_{c^{-}_{t}}}
+\end{equation}
+
+\begin{equation}
+\frac{\partial Log(1 + e^{g_{c^{-}}})}{\partial g_{c^{-}}}
+= \frac{e^{ g_{c^{-}}}}{1+e^{g_{c^{-}}}}
+\end{equation}
+
+
+Multiplying numerator and denominator of \textbf{(7)} by $e^{-g_{c^{-}}}$
+
+\begin{equation}
+    \frac{\partial Log(1 + e^{g_{c^{-}}})}{\partial g_{c^{-}}}= \frac{1}{1 + e^{-g_{c^{-}}}}
+\end{equation}
+
+Deriving $g_{c^{-}}$
+
+\begin{equation}
+\frac{\partial g_{c^{-}}}{\partial w_{c^{-}}^{T}}=w_{t}
+\end{equation}
+
+Plugging \textbf{(8)} and \textbf{(9)} in \textbf{(6)}
+\begin{equation}
+\boxed{
+\frac{\partial L(t, C_{t}^{-},C_{t}^{+})}{\partial w_{c^{-}}}=\frac{w_{t}}{1 + e^{-w_{c^{-}}^{T}w_{t}}}
+}
+\end{equation}
+
+ 
+\section{Question 2}
+Given $w_{t}$,  $\forall c \in \{C_{t}^{+}, C_{t}^{-}\}, g_{c}=w_{c}^{T}w_{t}$
+
+By applysing chain rule
+\begin{equation}
+\frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{t}} =
+\sum_{c \in C_{t}^{+}}
+\frac{\partial Log(1+ e^{-g_{c}})}{\partial g_{c}}
+*
+\frac{\partial g_{c}}{\partial w_{t}}
++
+\sum_{c \in C_{t}^{-}}
+\frac{\partial Log(1+ e^{g_{c}})}{\partial w_{t}}
+*
+\frac{\partial g_{c}}{\partial w_{t}}
+\end{equation}
+
+Deriving $g_{c}$
+
+\begin{equation}
+\frac{\partial g_{c}}{\partial w_{t}}=w_{c}
+\end{equation}
+
+
+Plugging \textbf{(12)} in \textbf{(11)}
+
+\begin{equation}
+\frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{t}} =
+\sum_{c \in C_{t}^{+}}
+\frac{\partial Log(1+ e^{-g_{c}})}{\partial g_{c^{+}}}
+w_{c^{+}}
++
+\sum_{c \in C_{t}^{-}}
+\frac{\partial Log(1+ e^{g_{c}})}{\partial g_{c^{-}}}
+w_{c^{-}}
+\end{equation}
+
+
+
+Plugging \textbf{(4)} and \textbf{(8)} in \textbf{(13)}
+
+\begin{equation}
+\boxed{
+\frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{t}} =
+\sum_{c \in C_{t}^{+}}
+ \frac{-w_{c^{+}}}{1 + e^{w_{c^{+}}^{T}w_{t}}}
++
+\sum_{c \in C_{t}^{-}}
+ \frac{w_{c^{-}}}{1 + e^{-w_{c^{+}}^{T}w_{t}}}
+ }
+\end{equation}
+
+
+\section{Question 3}
+
+This is my answer to question 3, with a citation \cite{vaswani2017attention}. 
+
+%------------------------------------------------
+
+\bibliographystyle{plain}
+\bibliography{references} % citation records are in the references.bib document
+
+\end{document}
