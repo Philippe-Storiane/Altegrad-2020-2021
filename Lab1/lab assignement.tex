@@ -1,0 +1,260 @@
+\documentclass[a4paper]{article} 
+\input{style/head.tex}
+
+%-------------------------------
+%	TITLE VARIABLES (identify your work!)
+%-------------------------------
+%-------------------------------
+%	TITLE VARIABLES (identify your work!)
+%-------------------------------
+
+\newcommand{\yourname}{Philippe BAZET} % replace YOURNAME with your name
+\newcommand{\youremail}{pbazet@yahoo.com} % replace YOUREMAIL with your email
+\newcommand{\assignmentnumber}{1} % replace X with the lab session number
+
+\begin{document}
+
+%-------------------------------
+%	TITLE SECTION (do not modify unless you really need to)
+%-------------------------------
+\input{style/header.tex}
+
+%-------------------------------
+%	ASSIGNMENT CONTENT (add your responses)
+%-------------------------------
+
+\section{Question 1}
+Given $c^{+} \in C^{+}_{t}$ only term of $L$ depending on $w_{c^{+}}$  is $Log(1 + e^{-g_{c^{+}}})$ with $g_{c^{+}} = w_{c^{+}}^{T}w_{t}$
+
+Applying chain rule
+
+
+\begin{equation}
+    \frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{c^{+}}}=
+    \frac{\partial Log(1 + e^{-g_{c^{+}}})}{\partial g_{c^{+}}}\frac{\partial g_{c^{+}}}{\partial w_{c^{+}}^{T}}
+\end{equation}
+
+\begin{equation}
+    \frac{\partial Log(1 + e^{-g_{c^{+}}})}{\partial g_{c^{+}}}= \frac{-e^{- g_{c^{+}}}}{1+e^{- g_{c^{+}}}}
+\end{equation}
+
+By multiplying numerator and denominator of \textbf{(2)} by $e^{g_{c^{+}}}$
+
+\begin{equation}
+    \frac{\partial Log(1 + e^{-g_{c^{+}}})}{\partial g_{c^{+}}} = \frac{-1}{1 + e^{g_{c^{+}}}}
+\end{equation}
+Deriving $g_{c^{+}}$
+
+\begin{equation}
+\frac{\partial g_{c^{+}}}{\partial w_{c^{+}}^{T}}=w_{t}
+\end{equation}
+
+Combining \textbf{(3)} and \textbf{(4)} in \textbf{(1)} and replacing $g_{c^{+}}$ by its value
+
+\begin{equation}
+\boxed{
+\frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{c^{+}}}=\frac{-w_{t}}{1 + e^{w_{c^{+}}^{T}w_{t}}}
+}
+\end{equation}
+
+Given $ c^{-} \in C^{-}_{t}$, $ g_{c^{+}} = w_{c^{+}}^{T}w_{t}$ using same reasoning
+\begin{equation}
+\frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{c^{-}}}=
+    \frac{\partial Log(1 + e^{g_{c^{-}}})}{\partial g_{c^{-}}}
+*
+\frac{\partial g_{c^{-}}}{\partial w_{c^{-}_{t}}}
+\end{equation}
+
+\begin{equation}
+\frac{\partial Log(1 + e^{g_{c^{-}}})}{\partial g_{c^{-}}}
+= \frac{e^{ g_{c^{-}}}}{1+e^{g_{c^{-}}}}
+\end{equation}
+
+
+Multiplying numerator and denominator of \textbf{(7)} by $e^{-g_{c^{-}}}$
+
+\begin{equation}
+    \frac{\partial Log(1 + e^{g_{c^{-}}})}{\partial g_{c^{-}}}= \frac{1}{1 + e^{-g_{c^{-}}}}
+\end{equation}
+
+Deriving $g_{c^{-}}$
+
+\begin{equation}
+\frac{\partial g_{c^{-}}}{\partial w_{c^{-}}^{T}}=w_{t}
+\end{equation}
+
+Plugging \textbf{(8)} and \textbf{(9)} in \textbf{(6)}
+\begin{equation}
+\boxed{
+\frac{\partial L(t, C_{t}^{-},C_{t}^{+})}{\partial w_{c^{-}}}=\frac{w_{t}}{1 + e^{-w_{c^{-}}^{T}w_{t}}}
+}
+\end{equation}
+
+ 
+\section{Question 2}
+Given $w_{t}$,  $\forall c \in \{C_{t}^{+}, C_{t}^{-}\}, g_{c}=w_{c}^{T}w_{t}$
+
+By applysing chain rule
+\begin{equation}
+\frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{t}} =
+\sum_{c \in C_{t}^{+}}
+\frac{\partial Log(1+ e^{-g_{c}})}{\partial g_{c}}
+*
+\frac{\partial g_{c}}{\partial w_{t}}
++
+\sum_{c \in C_{t}^{-}}
+\frac{\partial Log(1+ e^{g_{c}})}{\partial w_{t}}
+*
+\frac{\partial g_{c}}{\partial w_{t}}
+\end{equation}
+
+Deriving $g_{c}$
+
+\begin{equation}
+\frac{\partial g_{c}}{\partial w_{t}}=w_{c}
+\end{equation}
+
+
+Plugging \textbf{(12)} in \textbf{(11)}
+
+\begin{equation}
+\frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{t}} =
+\sum_{c \in C_{t}^{+}}
+\frac{\partial Log(1+ e^{-g_{c}})}{\partial g_{c^{+}}}
+w_{c^{+}}
++
+\sum_{c \in C_{t}^{-}}
+\frac{\partial Log(1+ e^{g_{c}})}{\partial g_{c^{-}}}
+w_{c^{-}}
+\end{equation}
+
+
+
+Plugging \textbf{(4)} and \textbf{(8)} in \textbf{(13)}
+
+\begin{equation}
+\boxed{
+\frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{t}} =
+\sum_{c \in C_{t}^{+}}
+ \frac{-w_{c}}{1 + e^{w_{c}^{T}w_{t}}}
++
+\sum_{c \in C_{t}^{-}}
+ \frac{w_{c}}{1 + e^{-w_{c}^{T}w_{t}}}
+ }
+\end{equation}
+
+
+\section{Question 3}
+
+After an important drop down during first iterations, loss seem to stabilize after 12 iterations around ($5.62-5.64$) withou =t beibg closed to 0.
+Among possible explanations
+\begin{itemize}
+\item Too small data set. If we compare we word2vec models available on Internet (billions of words) size of our training data is very small
+\item Bugs in matrix computation in code 
+\end{itemize}
+
+Some word association are relevant:
+\begin{itemize}
+\item Some related words have close consine similiarity of assocoated embeddings. Exemple actor and play ($0.9642$)
+\item  Same way, unrelated word have very different embeddings using cosine simlarity. Exemple wine and water ($0.325$)
+\end{itemize}
+
+Other word associations do not seem realistic: for exemple, "rich" and "poor" have very close word embeddings ($0.9637$)
+
+Same way, t-SNE mebeddings 2D representation displa ysome  related words closed from each other (but does not track all relevant words). For exemple "actor" and "show" are closed from each other in t-SNE representation
+
+
+\begin{figure}[ht]
+    \centering
+	\includegraphics[width=1.1 \textwidth]{figures/word_embeddings.pdf}
+\end{figure}
+
+\section{Question 4}
+Two models are described in \cite{quocLe2014doc2vec} to learn document vectors
+\begin{itemize}
+\item Distributed Memory Model of Paragraoh Vectors (PV-DM)\\
+PV-DM takes as input a document and a context sampled from input document and try to infer the center word of input context
+\item Distributed Bag of Words  of Paragraph Vectors (PV-DBOW)\\
+PV-DBOW takes as input a document, try to infer context sampled from document
+\end{itemize}
+
+In my understanding, PV-DBOW is focused on document vector learning and is not trying to combine with document vector learning. Only document matrix is input from model and contrary to Skip-Gram ob CBOW word2vec model, there is no input $R^{\vert V \vert \times d}$ word matrix from which word vector from $R^{d}$ can be obtained.\\
+
+Alternatively, PV-DM takes as input a document and a context. Through what is refered as word Matrix $W$ in \cite{quocLe2014doc2vec}, context can be associated to a word vector in $R^{d}$. Such association is performed by multiplying one-hot encoded representation of words of context in vocabulary $V$ with $W$ matrix.
+
+In assignment, skip-gram word2vec model, center word and not context are used as input to learn word vectors. To merge approach, for our architecture of combined document and word vector learning, following principles will be used:
+\begin{itemize}
+\item PV-DM architecture
+\item Using center word as input
+\item Using estimated probability distribution of context associated with center word as output
+\item Same negative sampling technique
+\end{itemize}
+
+
+\subsection{Combined PV-DM and Word2Vec Skip-gram model architecture}
+
+Model parameters are:
+
+\begin{itemize}
+\item $W_{d}$ Document Matrix that lives in $R^{\vert D \vert \times q }$. It comes from PV-DM model. $\vert D \vert$ is number of documents in training. $q$ is dimension for document vector. $W_{d}$ converts the one hot encoded vector representing a document in the training or test set into a document embedding by multiplying document vector by $W_{d}$ matrix
+\item $W_{t}$ word Matrix that lives in $R^{\vert V \vert \times p }$. It comes from Skip-gram lodel. $\vert D \vert$ is vocabulary size. $p$ is dimension for word vector. $W_{t}$ converts one hot encoded target word of training set into a word embedding by multiplying word vector by $W_{t}$ matrix 
+\item $W_{c}$ word Matrix that lives in $R^{(d + p) \times \vert V \vert }$. $W_{c}$ contains parameter for negative sampling prediction of context from target word. $W_{c}$ converts a combined document and word embedding into a probability estimation for word of sampled context. Concatenation of document and word vectors are used for hidden layer vector. Acccording to \cite{quocLe2014doc2vec}, PV-DM prediction seems to be more efficient by concatenating document and word vector instead of summing them.
+\end{itemize}
+
+Training set elements $(d,t,C_{t}^{+},C_{t}^{-})$ are
+\begin{itemize}
+\item $d$ is a document sampled from training or test set
+\item t is target sampled from the input sampled document
+\item $C_{t}^{+}$ are set of context word surrounding target word sampled from input document
+\item $C_{t}^{+}$ are set of negative samples from target word sampled from input document. $c$ in $C_{t}^{+}$ are words drawn from nagative sampling distribution as defined in \citep{quocLe2014doc2vec}
+\end{itemize}
+
+
+\subsection{word2vec preprocessing changes}
+
+
+\subsubsection{Document index to word index mapping table}
+
+During iteration over target word from corpus, mapping between document and associated words are tracked through a table indicating for each document, index inside corpus for first and last word from document.
+
+
+\subsection{word2vec training changes}
+
+\subsubsection{Document matrix weight initialization}
+$W_{d}$ document matrix weights are initialized using a normal distribution as for $W_{t}$ and $W_{c}$ matrix
+
+\subsubsection{Sampling strategy}
+Samples are not taken randomly from corpus. It would inbalance documents having less words than others. Instead, sampling is performed by combining document and context sampling.
+\begin{itemize}
+\item First, a document is sampled from uniform distribution in $[0, \vert D \vert - 1]$ using document index
+\item Second, a target and associated context from document is sampled using document word index association built using preprocessing
+\end{itemize}
+
+\subsubsection{Added document matrix in input layer}
+For each sample from training set,  document $d$ is represented by a one hot encoding for $\vert D \vert$ document of training sets. Such one hot encoding is used to index document vector in $W_{d}$ matrix
+
+\subsubsection{Combining document and word matrix for hidden vector}
+For each sample $(d,t,C_{t}^{+},C_{t}^{-})$, as for standard Word2Vec Skip-gram model, word vector for target $t$ is accessed using index of target isnide $W_{t}$ matrix through one hot-encoding of target
+
+Size $p$ Word vector and size $q$ document vector are concatenated to build an hidden vector of size $p + q$. Alternate strategy would have been to average them (in case $p$ and $q$ are same size). According to \citep{quocLe2014doc2vec} this alternative strategy is less efficient
+
+\subsubsection{Per training sample, input / output word matrix weights update}
+As for standard Word2Vec Skip-gram model, we perform negative sampling and use negative sampling loss accordingly
+During training phase, for each training sample, weights for $W_{t}$ and $W_{c}$ are updated using stochastic gradiant descent with negative sampling loss function and samples $(d,t,C_{t}^{+},C_{t}^{-})$ combining true context and negative examples.
+
+\subsubsection{Per document, input document matrix weights update}
+When training from sample $(d,t,C_{t}^{+},C_{t}^{-})$, only weights for document $d$ are updated by gradiant descent. 
+
+\subsubsection{two pass training}
+
+\paragraph{ First pass - combined learning word and document vector for training set}
+During  training, document $W_{d}$ and word input / output matrices ($W_{i}$ and $W_{o}$) weights are updated using gradiant descent
+
+\paragraph{ Second pass - only learning new document vector}
+In order to infer document vector for new documents, target and associated context are sampled from new document using negative sampling. Stochastic gradiant descent is used on samples to compute weights for $W_{d}$. New lines are added to $W_{d}$ to contain document vector for new documents.
+Contrary to first pass, during traning phase for samples from new documents, weights for $W_{t}$ (word input context selection) and output word matrix $W_{t}$ (negative sample probabilty estimation) are not updated.%------------------------------------------------
+
+\bibliographystyle{plain}
+\bibliography{references} % citation records are in the references.bib document
+
+\end{document}
