@@ -6,9 +6,9 @@ from torch.utils import data
 
 # = = = = = = = = = = =
 
-path_root = # fill me !
+path_root = "./" # fill me !
 
-path_to_model = path_root + '/code/'
+path_to_model = path_root + 'code/'
 sys.path.insert(0, path_to_model)
 
 from model import seq2seqModel
