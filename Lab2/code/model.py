@@ -25,7 +25,7 @@ class Encoder(nn.Module):
         # you should return a tensor of shape (seq,batch,feat)
         x = self.embedding( input)
         hs = self.rnn( x)
-        return hs
+        return hs[0]
 
 
 class seq2seqAtt(nn.Module):
@@ -42,8 +42,9 @@ class seq2seqAtt(nn.Module):
         target_h_rep = target_h.repeat(source_hs.size(0),1,1) # (1,batch,feat) -> (seq,batch,feat)
         # fill the gaps #
         # implement the score computation part of the concat formulation (see section 3.1. of Luong 2015)
-        concat_output = None
-        scores = torch.tensordot( concat_output, target_h_rep) # should be of shape (seq,batch,1)
+        
+        concat_output = self.ff_concat(torch.cat( (source_hs, target_h_rep), 2))
+        scores = self.ff_score( torch.tanh(concat_output )) # should be of shape (seq,batch,1)
         
         scores = scores.squeeze(dim=2) # (seq,batch,1) -> (seq,batch). dim=2 because we don't want to squeeze the batch dim if batch size = 1
         norm_scores = torch.softmax(scores,0)
@@ -68,9 +69,11 @@ class Decoder(nn.Module):
         # transform input into embeddings, pass embeddings to RNN, concatenate with source_context and apply tanh, and make the prediction
         # prediction should be of shape (1,batch,vocab), h and tilde_h of shape (1,batch,feat)
         embeddings = self.embedding( input)
-        h = self.rnn( embeddings, h )
-        h_tilde = torch.tanh( torch.cat( (source_context, h), 0) )
-        prediction = torch.softmax( self.predict( h_tilde))
+        h = self.rnn( embeddings, h )[1]
+        ct_h = torch.cat( (source_context, h ), 2)
+        wc = self.ff_concat( ct_h )
+        h_tilde = torch.tanh( wc  )
+        prediction = torch.softmax( self.predict( h_tilde),2)
         return prediction, h
 
 
@@ -160,7 +163,7 @@ class seq2seqModel(nn.Module):
             
             # fill the gap #
             # get the next input to pass the decoder
-            target_prob, target_input = prediction.topk(1)
+            target_prob, target_input = prediction.topk(1,2)
             target_input = target_input.squeeze(2)
             
             eos_counter += torch.sum(target_input==self.eos_token).item()
