@@ -1,0 +1,93 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+
+\input{style/head.tex}
+
+%-------------------------------
+%	TITLE VARIABLES (identify your work!)
+%-------------------------------
+%-------------------------------
+%	TITLE VARIABLES (identify your work!)
+%-------------------------------
+
+\newcommand{\yourname}{Philippe BAZET} % replace YOURNAME with your name
+\newcommand{\youremail}{pbazet@yahoo.com} % replace YOUREMAIL with your email
+\newcommand{\assignmentnumber}{2} % replace X with the lab session number
+
+\begin{document}
+
+%-------------------------------
+%	TITLE SECTION (do not modify unless you really need to)
+%-------------------------------
+\input{style/header.tex}
+
+%-------------------------------
+%	ASSIGNMENT CONTENT (add your responses)
+%-------------------------------
+
+\section{Question 1}
+As mention in \cite{luong2016}, greedy decoding stragegy is "heavily" suboptimal, two alternative strategies are proposed
+\begin{itemize}
+\item Beam Research. At each step, instead of one single hypothesis, a fixed set of $K$ possibles translations are tested in parallel. From each of these $K$ possible translations, news probability are built for next new word. From this newly built hypothesis set, only $K$ most probable sentences are selected
+\item Ensemble Research. An ensemble of different statistical learners are run separatly and final solution in made on building new proability by aggregating through predefined operators proability  from different learners
+\end{itemize}
+
+\subsection{Sub optimality for greedy research}
+
+In greedy research, a local optimal solution is chosen. The one that choose the most probable word given already generated sentence. Meanwhile, the objective function is global: not select the highest possible next word but the whole sentence that is most probable. The higuest most probable  sentence may include word that are not most probable given words preceding a given word.
+
+Global Objective function for given sentence $X$ translated from sentence $Y$ using notation from \citep{luong2016}
+\begin{equation}
+Objective_{global}(X) = Max Log (P( X \vert Y)) = \sum_{t} Log( P( x_{t} \vert x_{<t},Y)  
+\end{equation}
+
+
+Greedy objective function
+\begin{equation}
+Objective_{local}(x_{t}) = Max ( Log( P( x_{t} \vert x_{<t},Y))
+\end{equation}
+
+
+\subsection{Beam Research}
+$K$ most probablement sentences $K_{t}$ are tested in parallel at time $t$
+
+When trying to add a new word, probability are estimated for building new sentences from the $K_{t}$ hypothesis test set adding a new word. For each sentence $k_{t} \in K_{t}$, prediction is computed for new word from vocabulary, for $x_{t+1}$ word
+\begin{equation}
+prediction = Log(P(x_{t+1}^{k} \vert x_{<=t}^{k},Y))
+\end{equation}
+
+Prediction are then aggregated (summed) to log probability from $K$ sentences in order to compute probability for hypothesis for new sentences adding new word at end of sentence from $K$ sentences
+From this new hypothesis sentences test set, the $K$ most probable sentence are selected for builing new $K_{t+1}$ hypothesis test set 
+
+\subsection{ Ensemble Research}
+
+$M$ concurrent statistical learners are run in parallel. For a given sentence, each learner $m \in M$ will give its probability $p^{m} = P(x_{t}^{m} \vert x_{<t}^{m})$ for next word in sentence. These probabilities are then combined using specific operators to build a probability for next word in sentence using probabilities from $M$ statistical learners. \citep{luong2016} propose two operators
+\begin{itemize}
+\item Majority Voting (average of probability of different learners)
+\item Consensus $(\prod_{m=1}^{M} p^{m})^{1 / M}$
+
+\end{itemize}
+
+
+
+
+
+\section{Question 2}
+Sentences are over translated: same words appear several times in translation. Using approach from \cite{zhaopeng2016}, when translating a new word $x_{t}$, neural translation system should model $C_{t}$ proability that a source word belongs to history of source words that have already been translated. According to \citep{luong2015} attention weights help to give to each source word an importance in the translation for a given target word. As an assumption, the attention weight is correlated to proability that source word has been used for translating target word and thus beeing highly probable. Gor a given step $t$ in translation, in $C_{t}$. \citep{zhaopeng2016} model such historic context with attention weight combined with previous history modeling $C_{t-1}$ and hidden current state $h_{t-1}$ of translation. Additionnaly to model from \citep{luong2015}, attention weight will be also modeled combining history of word being translated $C_{t-1}$
+\section{Question 3}
+
+\section{Question 4}
+Two phenomenon appear
+\begin{itemize}
+\item Different meaning from same word "mean"
+\item Different grammatical usage for same word "mean" as a verb in first sentence and adjective in seconde sentence.
+
+To model this context diversity, neural translation model should have diffrenet embedding for same w word depending on context and usage.  Contrary to \cite{quocLe2014doc2vec} Skip-Grame datamodel implicit assumption, word cannot be always associated to one single context and embedding and word embedding should depend on context
+\end{itemize}
+
+
+
+\bibliographystyle{plain}
+\bibliography{references} % citation records are in the references.bib document
+
+\end{document}
