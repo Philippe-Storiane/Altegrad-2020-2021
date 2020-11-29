@@ -77,13 +77,25 @@ Sentences are over translated: same words appear several times in translation. U
 \section{Question 3}
 
 \section{Question 4}
-Two phenomenon appear
+Several phenomenons appear
 \begin{itemize}
-\item Different meaning from same word "mean"
-\item Different grammatical usage for same word "mean" as a verb in first sentence and adjective in seconde sentence.
-
-To model this context diversity, neural translation model should have diffrenet embedding for same w word depending on context and usage.  Contrary to \cite{quocLe2014doc2vec} Skip-Grame datamodel implicit assumption, word cannot be always associated to one single context and embedding and word embedding should depend on context
+\item Different meaning for same word "mean".
+\item Different grammatical usages for same word "mean" as a verb in first sentence and adjective in seconde sentence.
+\item Context sensitivity. Same word "mean" depending on context has very different translation and grammatical properties (meaning and syntax for sample sentences)
 \end{itemize}
+
+
+Thus language model should be able to model different knoweldge level of translated words. 
+\begin{itemize}
+\item low level pure syntax with phenomenon 2
+\item higher semantic level meaning with phenomemon 1
+\end{itemize}
+
+Language model should also be able to combine these different levels of knowledge, each level having a different contribution depending of  the language processing task (trasnlation, part of speach tagging etc..).\\
+
+Furthermoe, language model should be able to adapt representation (embedding) of word to context, allowing for same word different representaton depending on context. Not one single context can be associated for a given word. This is a major change from Skip-gram or Continuous Bag of Word model of \cite{quocLe2014doc2vec} first solution to associate to word a rich feature eautomated embedding. Context should embrace the full neighboroud of a word, thus both context words on the left and on the right of a given word\\
+
+Additionnally, for a given task we cannot expect to be able to model all these aspects especially if the availale data set is limited. Thus language model should enable to be re used as a tool box for downstream tasks. Like in \cite{elmo2018}, one approach is to deliver output from a given language model as additional features to be re used possibly by enabling some parameter tuning of offered features. Alternatively as in \cite{bert2018}, the language model can be directly used as the model for downstream task. The language model is pre trained on some denoising tasks (task that artifically damage pre trained coprpus and that are trained to rebuilt the artificially damaged corpus). This pretrained language model can then be plugged in the downstream task. The preset parameters for the pretrained language model being updated during training phase of  the targeted downstream task.
 
 
 
