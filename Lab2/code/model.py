@@ -46,7 +46,7 @@ class seq2seqAtt(nn.Module):
         # fill the gaps #
         # implement the score computation part of the concat formulation (see section 3.1. of Luong 2015)
         
-        concat_output = self.ff_concat(torch.cat( (source_hs, target_h_rep), 2))
+        concat_output = self.ff_concat(torch.cat( (target_h_rep, source_hs), 2))
         scores = self.ff_score( torch.tanh(concat_output )) # should be of shape (seq,batch,1)
         
         scores = scores.squeeze(dim=2) # (seq,batch,1) -> (seq,batch). dim=2 because we don't want to squeeze the batch dim if batch size = 1
@@ -188,6 +188,7 @@ class seq2seqModel(nn.Module):
             # get the next input to pass the decoder
             _, target_input = prediction.topk(1)
             target_input = target_input.squeeze(2)
+
             
             eos_counter += torch.sum(target_input==self.eos_token).item()
             
