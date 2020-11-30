@@ -1,3 +1,6 @@
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -23,9 +26,9 @@ class Encoder(nn.Module):
     def forward(self, input):
         # fill the gaps # (transform input into embeddings and pass embeddings to RNN)
         # you should return a tensor of shape (seq,batch,feat)
-        x = self.embedding( input)
-        hs = self.rnn( x)
-        return hs[0]
+        x = self.embedding( input )
+        output, hidden = self.rnn( x)
+        return output
 
 
 class seq2seqAtt(nn.Module):
@@ -51,8 +54,8 @@ class seq2seqAtt(nn.Module):
         source_hs_p = source_hs.permute((2,0,1)) # (seq,batch,feat) -> (feat,seq,batch)
         weighted_source_hs = (norm_scores * source_hs_p) # (seq,batch) * (feat,seq,batch) (* checks from right to left that the dimensions match)
         ct = torch.sum(weighted_source_hs.permute((1,2,0)),0,keepdim=True) # (feat,seq,batch) -> (seq,batch,feat) -> (1,batch,feat); keepdim otherwise sum squeezes 
+#        return ct, norm_scores
         return ct
-
 
 class Decoder(nn.Module):
     '''to be used one timestep at a time
@@ -69,12 +72,12 @@ class Decoder(nn.Module):
         # transform input into embeddings, pass embeddings to RNN, concatenate with source_context and apply tanh, and make the prediction
         # prediction should be of shape (1,batch,vocab), h and tilde_h of shape (1,batch,feat)
         embeddings = self.embedding( input)
-        h = self.rnn( embeddings, h )[1]
-        ct_h = torch.cat( (source_context, h ), 2)
+        output, hidden = self.rnn( embeddings, h )
+        ct_h = torch.cat( (source_context, hidden ), 2)
         wc = self.ff_concat( ct_h )
         h_tilde = torch.tanh( wc  )
-        prediction = torch.softmax( self.predict( h_tilde),2)
-        return prediction, h
+        prediction = self.predict( h_tilde)
+        return prediction, hidden
 
 
 class seq2seqModel(nn.Module):
@@ -117,6 +120,24 @@ class seq2seqModel(nn.Module):
         if self.do_att:
             self.att_mech = seq2seqAtt(self.hidden_dim_att,self.hidden_dim_s,self.hidden_dim_t).to(self.device)
     
+    def showAttention(self, input_sentence, output_words, attentions):
+        # Set up figure with colorbar
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        cax = ax.matshow(attentions.numpy(), cmap='bone')
+        fig.colorbar(cax)
+        
+        # Set up axes
+        ax.set_xticklabels([''] + input_sentence.split(' ') +
+                           ['<EOS>'], rotation=90)
+        ax.set_yticklabels([''] + output_words)
+        
+        # Show label at every tick
+        ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
+        ax.yaxis.set_major_locator(ticker.MultipleLocator(1))
+
+        plt.show()
+
     def my_pad(self,my_list):
         '''my_list is a list of tuples of the form [(tensor_s_1,tensor_t_1),...,(tensor_s_batch,tensor_t_batch)]
         the <eos> token is appended to each sequence before padding
@@ -147,10 +168,11 @@ class seq2seqModel(nn.Module):
         pos = 0
         eos_counter = 0
         logits = []
-        
+#        attentions = []
         while True:
             
             if self.do_att:
+#                source_context, attention_weights = self.att_mech(target_h,source_hs) # (1,batch,feat)
                 source_context = self.att_mech(target_h,source_hs) # (1,batch,feat)
             else:
                 source_context = source_hs[-1,:,:].unsqueeze(0) # (1,batch,feat) last hidden state of encoder
@@ -160,10 +182,11 @@ class seq2seqModel(nn.Module):
             prediction, target_h = self.decoder( target_input, source_context, target_h) 
             
             logits.append(prediction) # (1,batch,vocab)
-            
+ #           if self.do_att:
+ #               attentions.append( attention_weights )
             # fill the gap #
             # get the next input to pass the decoder
-            target_prob, target_input = prediction.topk(1,2)
+            _, target_input = prediction.topk(1)
             target_input = target_input.squeeze(2)
             
             eos_counter += torch.sum(target_input==self.eos_token).item()
@@ -177,8 +200,10 @@ class seq2seqModel(nn.Module):
         if is_prod:
             to_return = to_return.squeeze(dim=1) # (seq,vocab)
         
+#        return to_return, attentions
         return to_return
     
+
     def fit(self, trainingDataset, testDataset, lr, batch_size, n_epochs, patience):
         
         parameters = [p for p in self.parameters() if p.requires_grad]
@@ -269,9 +294,10 @@ class seq2seqModel(nn.Module):
     
     def predict(self,source_nl):
         source_ints = self.sourceNl_to_ints(source_nl)
-        logits = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
+        logits, attentions = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
         target_ints = logits.argmax(-1).squeeze() # (<=max_size,1) -> (<=max_size)
         target_nl = self.targetInts_to_nl(target_ints.tolist())
+        self.showAttention( source_nl, target_nl, attentions)
         return ' '.join(target_nl)
         
     def save(self,path_to_file):
