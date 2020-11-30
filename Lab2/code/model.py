@@ -294,10 +294,11 @@ class seq2seqModel(nn.Module):
     
     def predict(self,source_nl):
         source_ints = self.sourceNl_to_ints(source_nl)
-        logits, attentions = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
+#        logits, attentions = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
+        logits = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
         target_ints = logits.argmax(-1).squeeze() # (<=max_size,1) -> (<=max_size)
         target_nl = self.targetInts_to_nl(target_ints.tolist())
-        self.showAttention( source_nl, target_nl, attentions)
+#        self.showAttention( source_nl, target_nl, attentions)
         return ' '.join(target_nl)
         
     def save(self,path_to_file):
