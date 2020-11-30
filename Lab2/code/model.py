@@ -54,8 +54,8 @@ class seq2seqAtt(nn.Module):
         source_hs_p = source_hs.permute((2,0,1)) # (seq,batch,feat) -> (feat,seq,batch)
         weighted_source_hs = (norm_scores * source_hs_p) # (seq,batch) * (feat,seq,batch) (* checks from right to left that the dimensions match)
         ct = torch.sum(weighted_source_hs.permute((1,2,0)),0,keepdim=True) # (feat,seq,batch) -> (seq,batch,feat) -> (1,batch,feat); keepdim otherwise sum squeezes 
-#        return ct, norm_scores
-        return ct
+        return ct, norm_scores
+#       return ct
 
 class Decoder(nn.Module):
     '''to be used one timestep at a time
@@ -168,12 +168,12 @@ class seq2seqModel(nn.Module):
         pos = 0
         eos_counter = 0
         logits = []
-#        attentions = []
+        attentions = []
         while True:
             
             if self.do_att:
-#                source_context, attention_weights = self.att_mech(target_h,source_hs) # (1,batch,feat)
-                source_context = self.att_mech(target_h,source_hs) # (1,batch,feat)
+                source_context, attention_weights = self.att_mech(target_h,source_hs) # (1,batch,feat)
+#                source_context = self.att_mech(target_h,source_hs) # (1,batch,feat)
             else:
                 source_context = source_hs[-1,:,:].unsqueeze(0) # (1,batch,feat) last hidden state of encoder
             
@@ -182,8 +182,8 @@ class seq2seqModel(nn.Module):
             prediction, target_h = self.decoder( target_input, source_context, target_h) 
             
             logits.append(prediction) # (1,batch,vocab)
- #           if self.do_att:
- #               attentions.append( attention_weights )
+            if self.do_att:
+                attentions.append( attention_weights )
             # fill the gap #
             # get the next input to pass the decoder
             _, target_input = prediction.topk(1)
@@ -197,12 +197,12 @@ class seq2seqModel(nn.Module):
                 break
         
         to_return = torch.cat(logits,0) # logits is a list of tensors -> (seq,batch,vocab)
-        
+        to_attention = torch.cat( attentions, 1)
         if is_prod:
             to_return = to_return.squeeze(dim=1) # (seq,vocab)
         
-#        return to_return, attentions
-        return to_return
+        return to_return, to_attention
+#        return to_return
     
 
     def fit(self, trainingDataset, testDataset, lr, batch_size, n_epochs, patience):
@@ -295,11 +295,11 @@ class seq2seqModel(nn.Module):
     
     def predict(self,source_nl):
         source_ints = self.sourceNl_to_ints(source_nl)
-#        logits, attentions = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
-        logits = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
+        logits, attentions = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
+#        logits = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
         target_ints = logits.argmax(-1).squeeze() # (<=max_size,1) -> (<=max_size)
         target_nl = self.targetInts_to_nl(target_ints.tolist())
-#        self.showAttention( source_nl, target_nl, attentions)
+        self.showAttention( source_nl, target_nl, attentions)
         return ' '.join(target_nl)
         
     def save(self,path_to_file):
