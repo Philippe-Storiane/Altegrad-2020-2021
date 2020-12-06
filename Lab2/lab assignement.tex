@@ -1,5 +1,6 @@
 \documentclass[a4paper]{article}
 \usepackage{graphicx}
+\usepackage{float}
 
 \input{style/head.tex}
 
@@ -73,11 +74,71 @@ $M$ concurrent statistical learners are run in parallel. For a given sentence, e
 
 
 \section{Question 2}
-Sentences are over translated: same words appear several times in translation. Using approach from \cite{zhaopeng2016}, when translating a new word $x_{t}$, neural translation system should model $C_{t}$ proability that a source word belongs to history of source words that have already been translated. According to \citep{luong2015} attention weights help to give to each source word an importance in the translation for a given target word. As an assumption, the attention weight is correlated to proability that source word has been used for translating target word and thus beeing highly probable. Gor a given step $t$ in translation, in $C_{t}$. \citep{zhaopeng2016} model such historic context with attention weight combined with previous history modeling $C_{t-1}$ and hidden current state $h_{t-1}$ of translation. Additionnaly to model from \citep{luong2015}, attention weight will be also modeled combining history of word being translated $C_{t-1}$
+Sentences are over translated: same words appear several times in translation, translating far more words that expected. Using approach from \cite{zhaopeng2016}, neural model should model translation coverage for input words. For a given step $t$ in translation, the translation coverage $C_{t}$ should model the usage of each input word in the translation process up to step $t$. The translation coverage model sould be used in the attention model of input context vector defined in \cite{luong2015},  the attention weights should be updated in order to give less attention to input word that have already been used in translation and thus theirs attention weights need to be adjusted (lowered) in order to enable usage (give more attention) in translation of other input word that have less been used in translation. The same way, coverage model should be modeled using attention weights as input parameter. The importance (weight) of an input word in a translation coverage is directly correlated to cumulated attention weights of a given input word\\
+In this translation coverage sensitive neural model, objective function should also be adapted in order to additionnaly measure how effecfive the coverage model is to measure the real coverage of input word.\\
+
+\subsubsection{Coverage translation model}
+More formally, coverage model could be modelized as a vector $C_{t} \in R^{N}$ where $N$ is the maximum size of input sentence. For a given word at position $i$ in the input sentence, $C_{t,i}$ estimate coverage of input word. Instead of hard coverage that explicitly count hom many words have been translated, soft coverage is a probability estimate of such quantity. $C_{t,i}$ is estimated using a "neural netword equation" giving to a activation function, input parameters as
+\begin{itemize}
+\item $C_{t-1,i}$ coverage estimate for word at posiiton $i$ at previous step $t-1$
+\item $\widehat{h}_{i}$ hidden state of encoder for location $i$
+\item $h_{t-1}$ hidden state of translation at step $t-1$
+\item $\alpha_{t-1,i}$ attention weight for input word at location $i$ and step $t-1$
+\end{itemize}
+
+\subsubsection{Updated attention model}
+In attention model defined in \citep{luong2015}, several equations are proposed to score hidden state of translation $h_{t}$ with hidden state of input word $\widehat{h}_{i}$
+\begin{itemize}
+\item simple dot product $h^{T}_{t}h_{i}$ 
+\item generalize $h_{t}W_{\alpha}\widehat{h}_{i}$
+\item concat $v_{\alpha}^{T}tanh(W_{\alpha}[h_{t-1};\widehat{h}_{i}])$
+\end{itemize}
+
+$concat$ formulation is used for \citep{zhaopeng2016} and extended with an additional linear projection of translation coverage model $C_{t-1,i}$
+\begin{equation}
+score(h_{t},\widehat{h}_{i}) = v_{\alpha}^{T}tanh(W_{\alpha}[h_{t-1};\widehat{h}_{i}] + \boldsymbol{V_{\alpha}C_{t-1,i}})
+\end{equation}
+
+
+\subsubsection{Updated objective function}
+Standard language model objective is maximizing log probability of translation $y$ given an input sentence $x$ and model $\theta$,  $Log(P(y \vert x;\theta)$. This objective  is extended with an estimate of loss between \begin{itemize}
+\item estimated translation coverage model $\sum^{J}_{j=1}\Phi_{j}$
+\item effective translation coverage $\sum^{J}_{j=1}\sum^{I}_{i=1}\alpha_{i,j}$
+\end{itemize}  
+
+For the estimated translation coverage, for a given inout word at location $j$, we sample between 0 and a constant $N$ a $\Phi_{j}$ estimate based on a sigmoid function depending on a linear projection of an hidden state $\widehat{h}_{j}$ of input word at location $j$, $sigmoid(U_{\alpha}\widehat{h}_{j})$. $N$ is a constant number estimating the maximum potential number of word that can be translated from a given input word\\
+Effective translation coverage is performed by summing for a given input word attention weights of all output words 
+
+
+
 \section{Question 3}
 
+Two examples are given. One sentence from the test set in lab assignment "I have a red car"
+An other exemple "A green banana is delicious". The inversions between adjective and noun is very well captured for the adjective (where attention for translated adjective is above 0.8) and partially captured for the noun  (where attention for translated noun is around 0.5) 
+\begin{figure}[p]
+\includegraphics[keepaspectratio=true,scale=0.9]{figures/green banana.png}
+\caption{Alligment for translations "a green banana is delicious"}
+\end{figure}
+
+\begin{figure}
+\includegraphics[keepaspectratio=true,scale=0.9]{figures/red car.png}
+\caption{Alligments for "I have a red car"}
+\end{figure}
+
 \section{Question 4}
+Output from Lab assignment
+\begin{itemize}
+\item Traslation for "I did not mean to hurt you" $\Rightarrow$
+"je n ai pas voulu intention de blesser blesser blesser blesser blesser blesser . blesser . blesser . . . . . . . . . . . . ."
+\item  Translation for "She is so mean" $\Rightarrow$
+"elle est tellement méchant méchant"
+\end{itemize}
+
+
 Several phenomenons appear
+  
+
+
 \begin{itemize}
 \item Different meaning for same word "mean".
 \item Different grammatical usages for same word "mean" as a verb in first sentence and adjective in seconde sentence.
@@ -93,7 +154,7 @@ Thus language model should be able to model different knoweldge level of transla
 
 Language model should also be able to combine these different levels of knowledge, each level having a different contribution depending of  the language processing task (trasnlation, part of speach tagging etc..).\\
 
-Furthermoe, language model should be able to adapt representation (embedding) of word to context, allowing for same word different representaton depending on context. Not one single context can be associated for a given word. This is a major change from Skip-gram or Continuous Bag of Word model of \cite{quocLe2014doc2vec} first solution to associate to word a rich feature eautomated embedding. Context should embrace the full neighboroud of a word, thus both context words on the left and on the right of a given word\\
+Furthermoe, language model should be able to adapt representation (embedding) of word to context, allowing for same word different representaton depending on context. Not one single context can be associated for a given word. This is a major change from Skip-gram or Continuous Bag of Word model of \cite{mikolov2013} first solution to associate to word a rich feature eautomated embedding. Context should embrace the full neighboroud of a word, thus both context words on the left and on the right of a given word\\
 
 Additionnally, for a given task we cannot expect to be able to model all these aspects especially if the availale data set is limited. Thus language model should enable to be re used as a tool box for downstream tasks. Like in \cite{elmo2018}, one approach is to deliver output from a given language model as additional features to be re used possibly by enabling some parameter tuning of offered features. Alternatively as in \cite{bert2018}, the language model can be directly used as the model for downstream task. The language model is pre trained on some denoising tasks (task that artifically damage pre trained coprpus and that are trained to rebuilt the artificially damaged corpus). This pretrained language model can then be plugged in the downstream task. The preset parameters for the pretrained language model being updated during training phase of  the targeted downstream task.
 
