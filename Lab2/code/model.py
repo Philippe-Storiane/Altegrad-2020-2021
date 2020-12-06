@@ -55,7 +55,7 @@ class seq2seqAtt(nn.Module):
         weighted_source_hs = (norm_scores * source_hs_p) # (seq,batch) * (feat,seq,batch) (* checks from right to left that the dimensions match)
         ct = torch.sum(weighted_source_hs.permute((1,2,0)),0,keepdim=True) # (feat,seq,batch) -> (seq,batch,feat) -> (1,batch,feat); keepdim otherwise sum squeezes 
         return ct, norm_scores
-#       return ct
+#        return ct
 
 class Decoder(nn.Module):
     '''to be used one timestep at a time
@@ -124,12 +124,17 @@ class seq2seqModel(nn.Module):
         # Set up figure with colorbar
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        cax = ax.matshow(attentions.numpy(), cmap='bone')
+        atttentions_np = attentions.detach().numpy()
+        max_output = len( output_words)
+        if "." in output_words:
+            max_output = output_words.index( ".")
+        cax = ax.matshow( atttentions_np[:,0: max_output], cmap='bone')
         fig.colorbar(cax)
-        
+ #       filtered_cells = np.array
         # Set up axes
         ax.set_xticklabels([''] + input_sentence.split(' ') +
                            ['<EOS>'], rotation=90)
+        output_words = [ x for x in output_words if x != '.']
         ax.set_yticklabels([''] + output_words)
         
         # Show label at every tick
@@ -173,7 +178,7 @@ class seq2seqModel(nn.Module):
             
             if self.do_att:
                 source_context, attention_weights = self.att_mech(target_h,source_hs) # (1,batch,feat)
-#                source_context = self.att_mech(target_h,source_hs) # (1,batch,feat)
+ #               source_context = self.att_mech(target_h,source_hs) # (1,batch,feat)
             else:
                 source_context = source_hs[-1,:,:].unsqueeze(0) # (1,batch,feat) last hidden state of encoder
             
@@ -197,12 +202,13 @@ class seq2seqModel(nn.Module):
                 break
         
         to_return = torch.cat(logits,0) # logits is a list of tensors -> (seq,batch,vocab)
-        to_attention = torch.cat( attentions, 1)
+        
         if is_prod:
             to_return = to_return.squeeze(dim=1) # (seq,vocab)
-        
-        return to_return, to_attention
-#        return to_return
+        if self.do_att:
+            to_attentions = torch.cat( attentions, 1)
+        return to_return, to_attentions
+        return to_return
     
 
     def fit(self, trainingDataset, testDataset, lr, batch_size, n_epochs, patience):
@@ -252,7 +258,7 @@ class seq2seqModel(nn.Module):
                         else:
                             max_size = batch_target.size(0) # no need to continue generating after we've exceeded the length of the longest ground truth sequence
                         
-                        unnormalized_logits = self.forward(batch_source,max_size,is_prod)
+                        unnormalized_logits, _ = self.forward(batch_source,max_size,is_prod)
 
                         sentence_loss = criterion(unnormalized_logits.flatten(end_dim=1),batch_target.flatten())
 
@@ -297,10 +303,20 @@ class seq2seqModel(nn.Module):
         source_ints = self.sourceNl_to_ints(source_nl)
         logits, attentions = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
 #        logits = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
+                
+        target_ints = logits.argmax(-1).squeeze() # (<=max_size,1) -> (<=max_size)
+        target_nl = self.targetInts_to_nl(target_ints.tolist())
+#        self.showAttention( source_nl, target_nl, attentions)
+        return ' '.join(target_nl)
+
+    def showPredict(self,source_nl):
+        source_ints = self.sourceNl_to_ints(source_nl)
+        logits, attentions = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
+#        logits = self.forward(source_ints,self.max_size,True) # (seq) -> (<=max_size,vocab)
+                
         target_ints = logits.argmax(-1).squeeze() # (<=max_size,1) -> (<=max_size)
         target_nl = self.targetInts_to_nl(target_ints.tolist())
         self.showAttention( source_nl, target_nl, attentions)
-        return ' '.join(target_nl)
         
     def save(self,path_to_file):
         attrs = {attr:getattr(self,attr) for attr in self.ARGS}
@@ -313,4 +329,4 @@ class seq2seqModel(nn.Module):
         state_dict = attrs.pop('state_dict')
         new = cls(**attrs) # * list and ** names (dict) see args and kwargs
         new.load_state_dict(state_dict)
-        return new        
+        return new          
