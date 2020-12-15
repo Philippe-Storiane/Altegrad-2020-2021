@@ -1,0 +1,410 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+
+\input{style/head.tex}
+
+%-------------------------------
+%	TITLE VARIABLES (identify your work!)
+%-------------------------------
+%-------------------------------
+%	TITLE VARIABLES (identify your work!)
+%-------------------------------
+
+\newcommand{\yourname}{Philippe BAZET} % replace YOURNAME with your name
+\newcommand{\youremail}{pbazet@yahoo.com} % replace YOUREMAIL with your email
+\newcommand{\assignmentnumber}{4} % replace X with the lab session number
+
+\begin{document}
+
+%-------------------------------
+%	TITLE SECTION (do not modify unless you really need to)
+%-------------------------------
+\input{style/header.tex}
+
+%-------------------------------
+%	ASSIGNMENT CONTENT (add your responses)
+%-------------------------------
+
+\section{Question 1}
+
+\subsection{Number of edges}
+
+
+
+As complete graph is fully connected edges may be any combination of two vectices to be chosen among  $n_{1} = 100$ vertices.
+
+\begin{equation}
+complete\ graph\ edges= \binom{n_{1}}{2} = \frac{n_{1}*(n_{1} - 1)}{2}= 4\ 950
+\end{equation}
+As a complete bi partite any vectex of one partition ($n_{2}=50$ possibilities) can be connected to any vertext on the other partition $n_{2}$
+
+\begin{equation}
+bipartite\ graph\ edges= n_{2} * n_{2} = 2\ 500
+\end{equation} 
+
+Numbers of edges is summation of number edges of complete graph plus number of edges of bipartite graph
+
+\begin{equation}
+edges = complete\ graph\ edges\ +\ bipartite\ graph\ edges = \boxed{7\ 450} 
+\end{equation}
+\subsection{Number of triangles}
+
+\subsection{No triangle between vertex of complete and bipartite graph}
+
+Let us assume a triangle with vertices $c_{1}$, $c_{2}$ and $c_{3}$ and that $c_{1}$ belongs to connected graph and $c_{2}$ belongs to bi partite graph. As complete graph and bipartite graph are disconnected there is is no edge between $c_{1}$ and $c_{2}$. In order triplets $c_{1}$, $c_{2}$ and $c_{3}$ to be a triangle, there must be a vertex both between $c_{1}$ and $c_{3}$ and a vertex between $c_{2}$ and $c_{3}$
+Two option
+\begin{itemize}
+\item $c_{3}$ belongs to connected graph. $c_{2}$ and $c_{3}$ becomes a vertex between connected graph and bipartite graph. This is not possible due to disconnected complete and bi partite graph
+\item  $c_{3}$ belongs to bipartite graph. $c_{1}$ and $c_{3}$ becomes a vertex between connected graph and bipartite graph. This is not possible due to disconnected complete and bi partite graph
+\end{itemize}
+
+\subsection{Number of triangles inside complete graph}
+
+As graph is fully connected any combination of three vertices inside complete graphe can be a triangle
+
+\begin{equation}
+complete\ graph\ triangles= \binom{n_{1}}{3} = \frac{n_{1}*(n_{1} - 1)*(n_{1} - 3)}{3* 2} = 161\ 700
+\end{equation}
+
+\subsection{Number of triangles inside bi partite graph}
+
+As graph is bipartite, no triangle can only be inside one partition of the graph. Otherwise, there will be edges between vertices of same partition.\\
+Let index partitions as $partition_{1}$ and $partition_{2}$
+Two options for a triangle of vectices $c_{1}$, $c_{2}$ and $c_{3}$ assuming $c_{1}$ and $c_{2}$ are in same partition and $c_{3}$ is in a different partition
+\begin{itemize}
+\item $c_{1}$, $c_{2}$ are in $partition_{1}$. $c_{3}$ is in partition $partition_{2}$
+\item   $c_{1}$, $c_{2}$ are in $partition_{2}$.  $c_{3}$ is in partition $partition_{1}$
+\end{itemize}
+
+In both case, in order triplet $c_{1}$, $c_{2}$ and $c_{3}$ to be a triangle, there exists an edge between $c_{1}$ and $c_{3}$ and an other edge between $c_{2}$ and $c_{3}$. Bi partite graohe being complete, building a triagle means combine two independant choices
+\begin{itemize}
+\item Choose two nodes $c_{1}$ and $c_{2}$ in same partition among $\binom{n_{2}}{2}$ combinations
+\item Choose $c_{3}$  in an other partition among $n_{2}$ combination
+\end{itemize}
+
+Both choices are exclusive and generate same number of combinations
+
+\begin{equation}
+bipartite\ graph\ triangles = 2 * \binom{n_{2}}{2} * n_{2} = n_{2}^{2}*(n_{2} - 1) = 122\ 500
+\end{equation}
+
+
+\subsection{ Total number of triangles}
+
+Number of trianglles is summation of triangls of complete graph and bi partite graph
+
+\begin{equation}
+trinagles = complte graph triangles + bipartite graohe triangles = \boxed{284\ 500}
+\end{equation}
+
+\section{Question 2}
+
+Maximal global clsutering can be 1, in case all triangles are closed. This is the case for a complete grah where all vertices are connected to each other. There cannot be any open triangle.
+
+\section{Question 3}
+
+
+\subsection{Eigenvector for smallest eigenvalue}
+Smallest eigenvalue of $L_{rew}$ is 0 with corresponding eigenvector  vector $1^{*}$ of $R^{m}$ dimension with $1$ as value for all vector cells.
+
+For any row $i$ of $L_{rw}$
+\begin{equation}
+L_{rw,i} = I_{i} - D^{-1}_{i}A_{i}
+\end{equation}
+
+
+By multiplying $A$ with vector $1^{*}$
+
+\begin{equation}
+A.1^{*}_{i} = \sum_{j=1}^{m}(A_{i,j} * 1)
+\end{equation}
+
+Row $i$ correspond to $i$ vertex of graph. By definition of adjency matrix $A$, for all $j \in R^{m}$
+\begin{equation}
+A_{i,j} = \begin{cases}
+1\ if\ there\ exists\ edge\ beween\ node\ i\ and\ j\\
+0\ otherwise\\
+\end{cases}
+\end{equation}
+
+By definition,
+
+\begin{equation}
+A.1^{*}_{i} = \sum_{j} 1\ vertex\ exists\ between\ node\ i\ and\ node j
+\end{equation}
+
+By definition of degree for node $i$
+
+\begin{equation}
+A.1^{*}_{i} = degree(i)
+\end{equation}
+
+By defininiton of $D^{-1}$
+
+\begin{equation}
+D^{-1}_{i,j}= \begin{cases}
+\frac{1}{degree(i)})\ if\ i=j\\
+0\ if\ i \ne j\\
+\end{cases}
+\end{equation}
+
+Multiplying $D^{-1}$ and $A.1^{*}$
+\begin{equation}
+(D^{-1}A.1^{*})_{i} = \frac{degree(i)}{degree(i)} = 1 
+\end{equation}
+
+By definition
+
+\begin{equation}
+(I.1^{*})_{i} = 1^{*}_{i} = 1  
+\end{equation}
+
+
+\begin{equation}
+(I - D^{-1}A).1^{*}_{i} = (I.1^{*})_{i} - (D^{-1}A.1^{*})_{i} = 0  
+\end{equation}
+
+\subsection{Performance impact for removal of eigenvector with smallest eigenvalue}
+
+
+No impact for removal of last eigenvector. Eigenvectors from upper to lower value are assumed to project variance of data inside adjency matrix, the higher eigenvector bringing more variance. KMeans aggregates data using this variance. Last zeroed eignavalue brings no variance to data, so no impact for Kmeans algorithms which project variance of data  on eigen vector space.
+
+\section{Question 4}
+
+The output is not an exact solution but an approximation that may even in some cases fails to achieve expected requiements for minimal cut between clusters. An exemple is given p12 of \cite{luxburg2007} of spectral clustering output which failes to identify minimal cut for data.
+
+
+\subsubsection{ Relaxed solution of minimal cut for graph clustering}
+
+In case of multi way spectral clustering, spectral clustering assumes existing clusters are very close from an ideal situation where clusters are clearly separated and few edges exist between clusters.\\ 
+
+In such ideal situation, columns of adjency matrix can be organized and grouped by cluster. Each cluster correponds to a dedicated eigenvector of the adjency matrix and data from a given clusters are assumed to be closed from the associated eigen vector. Each eigen vector being orthogonal thus far from to each other, by clustering data on the projection of data on eigen vectors, we are assuming to recover clusters. \cite{ng2001} estimate an upperbound of distance of data inside a cluster given associated eigen vector and quantification of "how far" data is from this ideal situation. Spectral clustering technique use samllest eigen values close to zero to identify potential clusters. Eigenvectors are only used to project data for clustering them, not as potential centroid for cluster of data.
+
+In case, such assumption is not true, quality of spectral clustering can be poor.
+
+\subsubsection{Usage of Kmeans}
+
+AS a starting point, KMeans performs sampling to choose initial vectors from which clustering will be built. Depending on this choice and shape of data, cluster quality may vary. however, previous assumption from spectral clustering asumes data of given cluster are "compact" around eigen vector thus good candidate for KMeans. clustering.
+
+
+\section{Question 5}
+
+In both graphs, number of edges is the same $\boxed{m = 13}$
+
+\subsection{Graph (a)}
+
+\subsubsection{ "Green" cluster}
+
+\paragraph{$l_{c}$computation}
+
+Edge inventory
+\begin{itemize}
+\item $\textcircled{1}\Longleftrightarrow \textcircled{2}$
+\item $\textcircled{1}\Longleftrightarrow \textcircled{3}$
+\item $\textcircled{1}\Longleftrightarrow \textcircled{4}$
+\item $\textcircled{2}\Longleftrightarrow \textcircled{3}$
+\item $\textcircled{3}\Longleftrightarrow \textcircled{4}$
+\item $\textcircled{4}\Longleftrightarrow \textcircled{5}$
+\end{itemize}
+$\boxed{l_{c}=6}$
+\paragraph{$n_{c}$ computation}
+
+\begin{table}[h]
+\begin{tabular}{|c|c|}
+\hline
+node&degree\\
+\hline
+\textcircled{1}& 3\\
+\textcircled{2}& 2\\
+\textcircled{3}& 3\\
+\textcircled{4}& 3\\
+\textcircled{5}& 2\\
+\hline
+\end{tabular}
+
+\end{table}
+$\boxed{d_{c}=13}$
+\\
+
+$\boxed{"Green" modularity=\frac{l_{c}}{m} - \left(\frac{d_{c}}{2*m}\right)^{2}=0.211}$
+
+\subsubsection{ "Blue" cluster}
+
+\paragraph{$l_{c}$computation}
+
+Edge inventory
+\begin{itemize}
+\item $\textcircled{6}\Longleftrightarrow \textcircled{7}$
+\item $\textcircled{6}\Longleftrightarrow \textcircled{8}$
+\item $\textcircled{6}\Longleftrightarrow \textcircled{9}$
+\item $\textcircled{7}\Longleftrightarrow \textcircled{8}$
+\item $\textcircled{7}\Longleftrightarrow \textcircled{9}$
+\item $\textcircled{8}\Longleftrightarrow \textcircled{9}$
+\end{itemize}
+$\boxed{l_{c}=6}$
+\paragraph{$n_{c}$ computation}
+
+\begin{table}[h]
+\begin{tabular}{|c|c|}
+\hline
+node&degree\\
+\hline
+\textcircled{6}& 4\\
+\textcircled{7}& 3\\
+\textcircled{8}& 3\\
+\textcircled{9}& 3\\
+\hline
+\end{tabular}
+
+\end{table}
+$\boxed{d_{c}=13}$
+\\
+
+$\boxed{"Blue" modularity=\frac{l_{c}}{m} - \left(\frac{d_{c}}{4*m}\right)^{2}=0.211}$
+
+\subsubsection{Full modularity}
+$\boxed{modularity="Green" modularity + "Blue" modularity=0.42}$
+
+\subsection{Graph (b)}
+
+\subsubsection{ "Green" cluster}
+
+\paragraph{$l_{c}$computation}
+
+Edge inventory
+\begin{itemize}
+\item $\textcircled{1}\Longleftrightarrow \textcircled{2}$
+\item $\textcircled{9}\Longleftrightarrow \textcircled{8}$
+\end{itemize}
+$\boxed{l_{c}=2}$
+\paragraph{$n_{c}$ computation}
+
+\begin{table}[h]
+\begin{tabular}{|c|c|}
+\hline
+node&degree\\
+\hline
+\textcircled{1}& 3\\
+\textcircled{2}& 2\\
+\textcircled{8}& 3\\
+\textcircled{9}& 3\\
+\hline
+\end{tabular}
+
+\end{table}
+$\boxed{d_{c}=11}$
+\\
+
+$\boxed{"Green" modularity=\frac{l_{c}}{m} - \left(\frac{d_{c}}{2*m}\right)^{2}=-0.025}$
+
+\subsubsection{ "Blue" cluster}
+
+\paragraph{$l_{c}$computation}
+
+Edge inventory
+\begin{itemize}
+\item $\textcircled{3}\Longleftrightarrow \textcircled{4}$
+\item $\textcircled{4}\Longleftrightarrow \textcircled{5}$
+\item $\textcircled{5}\Longleftrightarrow \textcircled{6}$
+\item $\textcircled{6}\Longleftrightarrow \textcircled{7}$
+\end{itemize}
+$\boxed{l_{c}=4}$
+\paragraph{$n_{c}$ computation}
+
+\begin{table}[h]
+\begin{tabular}{|c|c|}
+\hline
+node&degree\\
+\hline
+\textcircled{3}& 3\\
+\textcircled{4}& 3\\
+\textcircled{5}& 2\\
+\textcircled{6}& 4\\
+\textcircled{7}& 3\\
+\hline
+\end{tabular}
+
+\end{table}
+$\boxed{d_{c}=15}$
+\\
+
+$\boxed{"Blue" modularity=\frac{l_{c}}{m} - \left(\frac{d_{c}}{4*m}\right)^{2}=-0.025}$
+
+\subsubsection{Full modularity}
+$\boxed{modularity="Green" modularity + "Blue" modularity=-0.05}$
+
+\section{Question 6}
+
+\subsection{Feature map for $C_{4}$}
+Given $c_{i}$ for $i = 1,..,4$ nodes of graph $C_{4}$, matrix $M_{C_{4}}$ is a $ 4 \times 4$ matrix such that
+
+\begin{equation}
+M_{C_{4},i,j}= shortest\ path\ distance\ between\ node\ c_{i}\ and\ c_{j}
+\end{equation}
+
+Using given formula in $(16)$
+
+\begin{equation}
+M_{C_{4}}=
+\begin{pmatrix}
+0 & 1 & 2 & 1\\
+1 & 0 & 1 & 2\\
+2 & 1 & 0 & 1\\
+1 & 2 & 1 & 0\\
+\end{pmatrix}
+\end{equation}
+
+
+Using shortest path kernel definition
+
+\begin{equation}
+C_{4}=(4,2,0,...0)
+\end{equation}
+
+\subsubsection{Feature map for $P_{4}$}
+
+Given $p_{i}$ for $i = 1,..,4$ nodes of graph $P_{4}$, matrix $M_{P_{4}}$ is a $ 4 \times 4$ matrix such that
+
+\begin{equation}
+M_{P_{4},i,j}= shortest\ path\ distance\ between\ node\ p_{i}\ and\ p_{j}
+\end{equation}
+
+Using given formula in $(16)$
+
+\begin{equation}
+M_{P_{4}}=
+\begin{pmatrix}
+0 & 1 & 2 & 3\\
+1 & 0 & 1 & 2\\
+2 & 1 & 0 & 1\\
+3 & 2 & 1 & 0\\
+\end{pmatrix}
+\end{equation}
+
+
+Using shortest path kernel definition
+
+\begin{equation}
+P_{4}=(3,2,1,...0)
+\end{equation}
+
+
+\subsubsection{kernel computation}
+\begin{equation}
+(C_{4},C_{4})= 20
+\end{equation}
+
+\begin{equation}
+(C_{4},P_{4})= 16
+\end{equation}
+
+\begin{equation}
+(P_{4},P_{4})= 14
+\end{equation}
+
+\bibliographystyle{plain}
+\bibliography{references} % citation records are in the references.bib document
+
+\end{document}
