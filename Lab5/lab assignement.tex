@@ -1,0 +1,218 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+
+\input{style/head.tex}
+
+%-------------------------------
+%	TITLE VARIABLES (identify your work!)
+%-------------------------------
+%-------------------------------
+%	TITLE VARIABLES (identify your work!)
+%-------------------------------
+
+\newcommand{\yourname}{Philippe BAZET} % replace YOURNAME with your name
+\newcommand{\youremail}{pbazet@yahoo.com} % replace YOUREMAIL with your email
+\newcommand{\assignmentnumber}{5} % replace X with the lab session number
+
+\begin{document}
+
+%-------------------------------
+%	TITLE SECTION (do not modify unless you really need to)
+%-------------------------------
+\input{style/header.tex}
+
+%-------------------------------
+%	ASSIGNMENT CONTENT (add your responses)
+%-------------------------------
+
+\section{Question 1}
+
+
+\section{Question 2}
+
+Reusing notation from Lab1 assignement, assuming we use a skip gram neural network with $d$ as dimension for hidden layer
+\begin{itemize}
+\item $\overline{V} = 11$ vocabulary sise for synthetic graph 
+\item $W_{t} \in R^{\overline{V} \times d}$ embedding matrix assigning embedding to an input node $t$
+\item $w_{t}$ embedding for node $t$
+\item $W_{c} \in R^{d \times \overline{V}}$ weight matrix for output context vector
+\item $c^{+} \in C_{t}^{+}$ is node belonging to true context vector for node $t$
+\item $c^{-} \in C_{t}^{-}$ is node belonging to a sample negative context vector for node $t$
+ \item $w_{c^{+}}$ is embedding for node $c^{+}$ belonging to true context for node $t$  
+ \item $w_{c^{-}}$ is embedding for node $c^{-}$ beoging to one of sampled negative context for node $t$
+\end{itemize}
+
+Usin general sotochastic gradiant descent formula for weight update for iteration $i+1$ from iteration $i$ with assicated learning rate $lr$
+\begin{equation}
+w_{c^{+}}(i+1) = w_{c^{+}}(i) -lr \frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{c^{+}}}
+\end{equation}
+\begin{equation}
+w_{c^{-}}(i+1) = w_{c^{-}}(i) -lr \frac{\partial L(t, C_{t}^{-},C_{t}^{-})}{\partial w_{c^{-}}}
+\end{equation}
+\begin{equation}
+w_{t}(i+1) = w_{t}(i) -lr \frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{t}}
+\end{equation}
+
+Reusing results from Lab 1 assignement, for each sample, derivatives formulas to compute $w_{t}$,$w_{c^{+}}$ and $w_{c^{-}}$ weight updates from partial derivative of $L(t, C_{t}^{+},C_{t}^{-})$ loss function
+\begin{equation}
+\frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{c^{+}}}=\frac{-w_{t}}{1 + e^{w_{c^{+}}^{T}w_{t}}}
+\end{equation}
+
+\begin{equation}
+\frac{\partial L(t, C_{t}^{-},C_{t}^{+})}{\partial w_{c^{-}}}=\frac{w_{t}}{1 + e^{-w_{c^{-}}^{T}w_{t}}}
+\end{equation}
+
+\begin{equation}
+\frac{\partial L(t, C_{t}^{+},C_{t}^{-})}{\partial w_{t}} =
+\sum_{c \in C_{t}^{+}}
+ \frac{-w_{c}}{1 + e^{w_{c}^{T}w_{t}}}
++
+\sum_{c \in C_{t}^{-}}
+ \frac{w_{c}}{1 + e^{-w_{c}^{T}w_{t}}}
+\end{equation}
+
+Reusing parametrization from random walk code
+\begin{itemize}
+\item Number of random walk is 10
+\item Length of random walk is 20
+\end{itemize}
+
+Considering graph size, at each iteration for word2vec network weight uppdate, we will process $11 * 10 = 110$ random walks. Thus, at each epoch of back progagatio, we can assume we perform weight update for all random walks in one batch. In that condition, considering structural similarity of node $v_{1}$ and node $v_{2}$ and closedness of both nodes in graph, after random walks generation, for Word2Vec algorithm, list of possible contexts associated to node $v_{1}$ and $v_{2}$ should be close. The same way, for a given context, list of possible negative samples should be also taken from same distribution.\\
+At each iteration, so summation of weight update for $w_{c^{+}}$, $w_{c^{-}}$ and $w_{t}$ should be close. If we consider as negilible, impact of initial values of these weights. After all iterations, final weights for $w_{v_{1}}$ and $w_{v_{1}}$ should be close to each other. 
+
+Weights  $w_{v_{1}}$ and $w_{v_{1}}$ are respectively embeddings of node $v_{1}$ and $v_{2}$. Thus ramdom walk algorithm will map these nodes to embeddings close to each other.
+\section{Question 3}
+
+Given A adjency matrix of a graphe $G$, a graph with a 4 node cycle
+
+\begin{equation}
+A=
+\begin{pmatrix}
+0 & 1 & 0 & 1\\
+1 & 0 & 1 & 0\\
+0 & 1 & 0 & 1\\
+1 & 0 & 1 & 0\\
+\end{pmatrix}
+\end{equation}
+
+Given $I$, the identify matrix for $R^{4}$
+
+\begin{equation}
+\overline{A} = A + I =
+\begin{pmatrix}
+1 & 1 & 0 & 1\\
+1 & 1 & 1 & 0\\
+0 & 1 & 1 & 1\\
+1 & 0 & 1 & 1\\
+\end{pmatrix}
+\end{equation}
+
+Given $\overline{D}$ diagnonal matrix $R^{4 \times 4}$ such that $\overline{D}_{i,i} = \sum_{j} \widehat{A}_{i,j}$
+
+\begin{equation}
+\overline{D}=
+\begin{pmatrix}
+3 & 0 & 0 & 0\\
+0 & 3 & 0 & 0\\
+0 & 0 & 3 & 0\\
+0 & 0 & 0 & 3\\
+\end{pmatrix}
+\end{equation}
+
+\begin{equation}
+\overline{D}^{-\frac{1}{2}}=
+\begin{pmatrix}
+0.57 & 0 & 0 & 0\\
+0 & 0.57 & 0 & 0\\
+0 & 0 & 0.57 & 0\\
+0 & 0 & 0 & 0.57\\
+\end{pmatrix}
+\end{equation}
+Given $\widehat{A} = \overline{D}^{-\frac{1}{2}} \overline{A} \overline{D}^{-\frac{1}{2}}$
+
+\begin{equation}
+\widehat{A} =
+\begin{pmatrix}
+0.33 & 0.33 & 0 & 0.33\\
+0.33 & 0.33 & 0.33 & 0\\
+0 & 0.33 & 0.33 & 0.33\\
+0.33 & 0 & 0.33 & 0.33\\
+\end{pmatrix}
+\end{equation}
+
+\begin{equation}
+X W^{1}=
+\begin{pmatrix}
+0.8 & -0.5\\
+0.8 & -0.5\\
+0.8 & -0.5\\
+0.8 & -0.5\\
+\end{pmatrix}
+\end{equation}
+
+\begin{equation}
+\overline{A} X W^{1}=
+\begin{pmatrix}
+0.8 & -0.5\\
+0.8 & -0.5\\
+0.8 & -0.5\\
+0.8 & -0.5\\
+\end{pmatrix}
+\end{equation}
+
+Given $Z_{0}=Relu(\overline{A} X W^{1})$
+
+\begin{equation}
+Z_{0}=
+\begin{pmatrix}
+0.8 & 0\\
+0.8 & 0\\
+0.8 & 0\\
+0.8 & 0\\
+\end{pmatrix}
+\end{equation}
+
+\begin{equation}
+\overline{A} Z_{0} W^{2}=
+\begin{pmatrix}
+0.72 & -0.96 & 0.32\\
+0.72 & -0.96 & 0.32\\
+0.72 & -0.96 & 0.32\\
+0.72 & -0.96 & 0.32\\
+\end{pmatrix}
+\end{equation}
+
+Given $Z_{1}= Relu(\overline{A} Z_{0} W^{2})$
+
+\begin{equation}
+Z_{1}=
+\begin{pmatrix}
+0.72 & 0 & 0.32\\
+0.72 & 0 & 0.32\\
+0.72 & 0 & 0.32\\
+0.72 & 0 & 0.32\\
+\end{pmatrix}
+\end{equation}
+
+All nodes have same representation. It comes that source features for each node are the same. Thus, their linear projection on $W^{1}$ are the same. Given specific structure of graph, during first message passing layer traversal, the identical information is passed three times. One as a self loop, one from two node in edges  in cycle graph. Thus, first message passing layer keep the identical information for each node. Same way, the relu layer will remove negative information from same identical information, thus maintaining the same information for each node.\\
+Using same principles, $W^{2}$ projection, associated message passing and Relu non linear activation keep same information for each node.
+
+\section{Question 4}
+
+The accuracy of the graph neural network with one hot encoding of node is 1.0. On the contrary, the accuracy of graoh neural network with flat (same) feature vector for all node is 0.28. The explanation is identical as for Question 3.\\
+One hot encoding gives node representations very different from each other. The graph neural network will propagate these differences to all nodes thourgh message passing.\\
+On the contrary, for identical node representatuon,  the graph neural structure will keep same uniformized representation for all nodes through all graph neural network layers processing
+\begin{itemize}
+\item Linear projection though $W_{1}$ or $w_{2}$ matrix mutiplication of identical feature vector will keep unifmormized node representation
+\item message passing though normalized adjency matrix multiplication will pass same weighted sum to 1 of uniformized representation 
+\item relu removal of negative value of same node representation will output same representation node
+\end{itemize}
+
+In case of same feature value, same node representation is propagated trhough all graph neural network up to output of neural network, making hard for any learning.
+
+\bibliographystyle{plain}
+\bibliography{references} % citation records are in the references.bib document
+
+\end{document}
